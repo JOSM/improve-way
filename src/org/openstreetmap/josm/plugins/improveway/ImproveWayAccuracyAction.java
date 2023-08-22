@@ -39,7 +39,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IWaySegment;
@@ -128,15 +128,15 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
     private int equalAngleCircleRadius;
     private long longKeypressTime;
 
-    private boolean helpersEnabled = false;
-    private boolean helpersUseOriginal = false;
+    private boolean helpersEnabled;
+    private boolean helpersUseOriginal;
     private final transient Shortcut helpersShortcut;
-    private long keypressTime = 0;
-    private boolean helpersEnabledBeforeKeypressed = false;
+    private long keypressTime;
+    private boolean helpersEnabledBeforeKeypressed;
     private Timer longKeypressTimer;
-    private boolean isExpert = false;
+    private boolean isExpert;
 
-    private boolean mod4 = false; // Windows/Super/Meta key
+    private boolean mod4; // Windows/Super/Meta key
 
     /**
      * Constructs a new {@code ImproveWayAccuracyAction}.
@@ -220,11 +220,13 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
         selectTargetWayStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.select-target", "2"));
         moveNodeStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.move-node", "1 6"));
-        moveNodeIntersectingStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6"));
+        moveNodeIntersectingStroke =
+                GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.move-node-intersecting", "1 2 6"));
         addNodeStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.add-node", "1"));
         deleteNodeStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.delete-node", "1"));
         arcStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.helper-arc", "1"));
-        perpendicularLineStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.helper-perpendicular-line", "1 6"));
+        perpendicularLineStroke =
+                GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.helper-perpendicular-line", "1 6"));
         equalAngleCircleStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("improvewayaccuracy.stroke.helper-eual-angle-circle", "1"));
 
         dotSize = Config.getPref().getInt("improvewayaccuracy.dot-size", 6);
@@ -336,7 +338,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
                 g.setStroke(addNodeStroke);
                 p1 = mv.getPoint(candidateSegment.getFirstNode());
                 p2 = mv.getPoint(candidateSegment.getSecondNode());
-            } else if (!(alt ^ ctrl) && candidateNode != null) {
+            } else if (alt == ctrl && candidateNode != null) {
                 g.setStroke(moveNodeStroke);
                 List<Pair<Node, Node>> wpps = targetWay.getNodePairs(false);
                 for (Pair<Node, Node> wpp : wpps) {
@@ -426,7 +428,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
             // Pie with turn angle
             Node node;
-            LatLon coor, lastcoor = null;
+            ILatLon coor, lastcoor = null;
             Point point, lastpoint = null;
             double distance;
             double heading, lastheading = 0;
@@ -532,7 +534,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
 
     // returns node index for closed ways using possibly under/overflowed index
     // returns -1 if not closed and out of range
-    private int fixIndex(int count, boolean closed, int index) {
+    private static int fixIndex(int count, boolean closed, int index) {
         if (index >= 0 && index < count) return index;
         if (!closed) return -1;
         while (index < 0) index += count;
@@ -540,7 +542,7 @@ public class ImproveWayAccuracyAction extends MapMode implements MapViewPaintabl
         return index;
     }
 
-    private double fixHeading(double heading) {
+    private static double fixHeading(double heading) {
         while (heading < -180) heading += 360;
         while (heading > 180) heading -= 360;
         return heading;
