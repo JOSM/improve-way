@@ -36,7 +36,6 @@
               <Plugin-Link>${plugin.link}</Plugin-Link>
               <Plugin-Icon>${plugin.icon}</Plugin-Icon>
               <Plugin-Canloadatruntime>${plugin.canloadatruntime}</Plugin-Canloadatruntime>
-              <Plugin-Requires>${plugin.requires}</Plugin-Requires>
             </manifestEntries>
           </archive>
         </configuration>
