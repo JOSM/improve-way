@@ -36,4 +36,4 @@ Windows key (also called meta, super, mod4) locks new position to the center of 
 Authors
 -------
 
-Original tool called "Improve Way Accuracy" was written by [Alexander Kachkaev](https://github.com/kachkaev). Extended features were added by [András Kolesár](https://github.com/kolesar-andras). Feedbacks are welcome.
+Original tool called "Improve Way Accuracy" was written by [Alexander Kachkaev](https://github.com/kachkaev). Extended features were added by [András Kolesár](https://github.com/kolesar-andras). Feedback is welcome.
